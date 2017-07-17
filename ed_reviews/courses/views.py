@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
@@ -54,6 +55,17 @@ class CourseViewSet(viewsets.ModelViewSet):
     #This method makes the url for /api/v2/courses/1(x)/reviews and is called adhoc method
     #By doing this the reivews are list view only, users cannot create new reviews.
 
-class ReviewViewSet(viewsets.ModelViewSet):
+class ReviewViewSet(mixins.CreateModelMixin,
+                   mixins.RetrieveModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.DestroyModelMixin,
+                   #mixins.ListModelMixin,
+                   viewsets.GenericViewSet):
+
     queryset = models.Review.objects.all()
     serializer_class = serializers.ReviewSerializer
+
+#the mixins inherited in this class, helps us to remove the list view for all reviews located in
+# localhost:8000/api/v2/reviews/ as it doesn't make sense to show all reviews.
+#However, if we navigate to a single review eg: api/v2/reviews/1 it still works.
+#the only thing I had to do to remove the list view for all reviews was to import mixins and remove ListModeMixin
