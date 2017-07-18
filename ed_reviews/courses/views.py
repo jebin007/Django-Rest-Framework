@@ -59,7 +59,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         serializer = serializers.ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
-        
+
         course = self.get_object()
         serializer = serializers.ReviewSerializer(course.reviews.all(), many=True)
         return Response(serializer.data)
