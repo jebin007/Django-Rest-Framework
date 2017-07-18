@@ -49,6 +49,17 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['get'])
     def reviews(self, request, pk=None):
+        self.pagination_class.page_size = 1
+        reviews = models.Review.objects.filter(course=pk)   #get all the reviews for current course
+        page = self.paginate_queryset(reviews)
+
+        if page is not None:
+            serializer = serializers.ReviewSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = serializers.ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+        
         course = self.get_object()
         serializer = serializers.ReviewSerializer(course.reviews.all(), many=True)
         return Response(serializer.data)
