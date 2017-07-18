@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
+from rest_framework import permissions
 
 from . import models
 from . import serializers
@@ -43,7 +44,20 @@ class RetrieveUpdateDestroyReview(generics.RetrieveUpdateDestroyAPIView):
     #get queryset gets multiple items whereas get_objects gets single item.
     #out of this queryset get a single object that has this course id and this pk.
 
+class IsSuperUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_superuser:
+            return True
+        else:
+            if request.method == 'DELETE':
+                return False
+
+
 class CourseViewSet(viewsets.ModelViewSet):
+    permission_classes = (
+        IsSuperUser,
+        permissions.DjangoModelPermissions,
+    )  #For this viewset, ignore default permissions and care about Django Model Permissions
     queryset = models.Course.objects.all()
     serializer_class = serializers.CourseSerializer
 
