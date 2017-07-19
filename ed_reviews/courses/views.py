@@ -63,7 +63,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['get'])
     def reviews(self, request, pk=None):
-        self.pagination_class.page_size = 1
+        self.pagination_class.page_size = 5
         reviews = models.Review.objects.filter(course=pk)   #get all the reviews for current course
         page = self.paginate_queryset(reviews)
 
